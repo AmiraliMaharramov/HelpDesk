@@ -26,6 +26,8 @@ if (file_exists(CONFIG_PATH . '/env.php')) {
 require CONFIG_PATH . '/app.php';
 require CONFIG_PATH . '/database.php';
 require APP_PATH    . '/Helpers/Lang.php';
+require APP_PATH    . '/Helpers/Csrf.php';
+require APP_PATH    . '/Helpers/helpers.php';
 
 // ── Session ───────────────────────────────────────────────────────────────────
 ini_set('session.cookie_httponly', '1');
@@ -87,6 +89,10 @@ $routes = [
     ['POST', '/contact',           'PublicController',  'contactSubmit'],
     ['GET',  '/blog',              'PublicController',  'blog'],
     ['GET',  '/blog/:slug',        'PublicController',  'blogArticle'],
+
+    // ── FAQ / AI Search API (public, JSON) ────────────────────────────────
+    ['GET',  '/api/faq/search',    'FaqController',     'search'],
+    ['POST', '/api/faq/deflect',   'FaqController',     'deflect'],
 
     // ── Auth ───────────────────────────────────────────────────────────────
     ['GET',  '/login',             'AuthController',    'loginForm'],
