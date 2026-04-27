@@ -1,0 +1,36 @@
+# Environment / generated config
+config/env.php
+
+# Installer lock
+install.php.done
+
+# Storage (logs, cache, sessions, uploads)
+storage/logs/*.log
+storage/cache/*
+storage/sessions/*
+public/images/uploads/*
+public/images/qrcodes/*
+
+# Keep directory stubs
+!storage/logs/.gitkeep
+!storage/cache/.gitkeep
+!storage/sessions/.gitkeep
+!public/images/uploads/.gitkeep
+!public/images/qrcodes/.gitkeep
+!public/images/products/.gitkeep
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Composer (if added later)
+vendor/
+composer.lock
+
+# Node (if added later)
+node_modules/
+npm-debug.log*
