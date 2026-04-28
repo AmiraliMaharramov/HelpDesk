@@ -33,10 +33,10 @@ abstract class Controller
         require VIEW_PATH . '/' . $template . '.php';
         $pageContent = ob_get_clean();
 
-        if ($layout !== '') {
-            require VIEW_PATH . '/layouts/' . $layout . '.php';
-        } else {
+        if ($layout === '' || $layout === 'plain') {
             echo $pageContent;
+        } else {
+            require VIEW_PATH . '/layouts/' . $layout . '.php';
         }
     }
 

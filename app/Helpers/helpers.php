@@ -65,3 +65,68 @@ function clean(string $value): string
 {
     return trim(strip_tags($value));
 }
+
+/**
+ * Write a row to the audit_logs table.
+ *
+ * @param array<string,mixed>|null $oldValues
+ * @param array<string,mixed>|null $newValues
+ */
+function audit(
+    string  $action,
+    string  $module,
+    ?string $entityType  = null,
+    ?int    $entityId    = null,
+    ?array  $oldValues   = null,
+    ?array  $newValues   = null,
+    ?int    $userId      = null
+): void {
+    try {
+        $uid = $userId ?? ($_SESSION['user_id'] ?? null);
+        db()->prepare(
+            "INSERT INTO audit_logs
+             (user_id, action, module, entity_type, entity_id, old_values, new_values, ip_address, user_agent)
+             VALUES (:uid, :action, :module, :et, :eid, :old, :new, :ip, :ua)"
+        )->execute([
+            ':uid'    => $uid,
+            ':action' => $action,
+            ':module' => $module,
+            ':et'     => $entityType,
+            ':eid'    => $entityId,
+            ':old'    => $oldValues  !== null ? json_encode($oldValues)  : null,
+            ':new'    => $newValues  !== null ? json_encode($newValues)  : null,
+            ':ip'     => $_SERVER['REMOTE_ADDR']   ?? null,
+            ':ua'     => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500),
+        ]);
+    } catch (PDOException $e) {
+        error_log('[audit] ' . $e->getMessage());
+    }
+}
+
+/**
+ * Create a web notification for a user.
+ *
+ * @param array<string,mixed>|null $data  Extra JSON payload
+ */
+function notify(
+    int     $userId,
+    string  $type,
+    string  $title,
+    ?string $body  = null,
+    ?array  $data  = null
+): void {
+    try {
+        db()->prepare(
+            "INSERT INTO notifications (user_id, type, title, body, data, channel)
+             VALUES (:uid, :type, :title, :body, :data, 'web')"
+        )->execute([
+            ':uid'   => $userId,
+            ':type'  => $type,
+            ':title' => $title,
+            ':body'  => $body,
+            ':data'  => $data !== null ? json_encode($data) : null,
+        ]);
+    } catch (PDOException $e) {
+        error_log('[notify] ' . $e->getMessage());
+    }
+}
